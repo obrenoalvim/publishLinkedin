@@ -7,7 +7,8 @@
     "post": "node post.js",
     "list": "node post.js --list",
     "validate": "node post.js --validate",
-    "auth": "node auth.js"
+    "auth": "node auth.js",
+    "setup": "node scripts/setup-check.js"
   },
   "dependencies": {
     "dotenv": "^16.4.0"
