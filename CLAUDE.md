@@ -1,6 +1,6 @@
 # publish-linkedin
 
-LinkedIn content queue automation for Breno Alvim's profile.
+LinkedIn content queue automation.
 
 ## Setup
 
@@ -22,7 +22,7 @@ node post.js              # publish next pending post
 
 ## Generating new posts (MANDATORY FLOW)
 
-Read `CONTENT_RULES.md` before writing a single word.
+**Read `CONTENT_RULES.md` first. Ask the user the questions listed there before writing anything.**
 
 ### Step 1 — check current queue
 
@@ -30,46 +30,35 @@ Read `CONTENT_RULES.md` before writing a single word.
 node -e "const q=require('./queue.json'); const p=q.filter(x=>x.status==='pending'); console.log(q.length,'total |',p.length,'pending | last ID:',Math.max(...q.map(x=>x.id))); p.slice(-5).forEach(x=>console.log(x.id,'|',x.title))"
 ```
 
-### Step 2 — define topics
+### Step 2 — ask the user (if not already defined)
 
-Check recent titles above. Discard duplicates unless the angle is clearly different.
+Before generating, confirm:
+- Topics for this batch
+- Any specific angles or stories to include
+- Any topics to avoid this time
 
-### Step 3 — dispatch parallel agents (MANDATORY even if execute fails)
+### Step 3 — write posts
 
-```
-ToolSearch → mcp__ruflo__swarm_init, mcp__ruflo__agent_spawn
-swarm_init topology=star, maxAgents=N
-agent_spawn one per post (parallel)
-```
+Generate in parallel via Agent tool. Follow `CONTENT_RULES.md` exactly.
 
-> `agent_execute` requires `ANTHROPIC_API_KEY` in env. If it fails, generate posts directly — the swarm registration is what matters.
-
-### Step 4 — write posts
-
-Follow `CONTENT_RULES.md` exactly. One agent per post in parallel.
-
-### Step 5 — apply `/stop-slop`
-
-Run `/stop-slop` on every post. Minimum score: **35/50**. Fix and recheck until passing.
-
-### Step 6 — validate character count
+### Step 4 — validate character count
 
 ```js
 [...body].length < 4000   // Unicode chars, not bytes
 ```
 
-If over limit: cut middle paragraphs. Always preserve opening + engagement question + hashtags.
+If over limit: cut middle paragraphs. Always preserve: opening + engagement question + hashtags.
 
-### Step 7 — write to queue.json
+### Step 5 — write to queue.json
 
-Use a Node.js script (copy pattern from `scripts/add-posts-example.js`). Never use shell template literals with quotes — write a `.js` file and run it.
+Use a Node.js script (copy `scripts/add-posts-example.js`). Never use shell template literals with quotes — write a `.js` file and run it.
 
 The script must:
 - Check for duplicate IDs before writing
 - Validate char count before writing
 - Print confirmation after writing
 
-### Step 8 — commit and push
+### Step 6 — commit and push
 
 ```bash
 git add queue.json
@@ -81,48 +70,19 @@ Resolve conflicts before pushing.
 
 ---
 
-## Post format (follow exactly)
+## Critical writing rules
 
-```
-🇺🇸 [EN body — 3-4 paragraphs, ends with engagement question]
-
----
-
-🇧🇷 [PT body — same message in natural Brazilian Portuguese]
-
-#PTHashtag1 #PTHashtag2 #PTHashtag3 #PTHashtag4 #Brasil
-#ENHashtag1 #ENHashtag2 #ENHashtag3 #ENHashtag4 #Software
-```
-
-Each entry: `[...body].length < 4000`
-
----
-
-## Content rules (summary — full rules in CONTENT_RULES.md)
-
-**Voice**
-- No emojis except flags 🇺🇸 🇧🇷
-- No em dash (`—`). Use comma or period.
+- No parentheses in post body — **breaks the LinkedIn API**
+- No em dash (`—`) — use comma or period
+- No emojis except flag emojis if using bilingual format
 - No bullet lists or numbered lists
 - No adverbs
-- Active voice — human subject doing something
-- Specific: real dates, names, numbers. No vague declarations.
-- End every post with an engagement question to the reader
-- Tone: dinner conversation, not press release
+- Active voice
+- Specific: real dates, names, numbers
+- End with engagement question
+- `[...body].length < 4000`
 
-**Allowed topics**
-- History of technology, software engineering, product decisions, dev culture
-- B2C — speak to the end user/professional, not sales teams
-
-**Banned topics**
-- Cold calls, phone calls, video calls, active prospecting
-
-**Stop-slop patterns to eliminate**
-- Unnecessary openers ("Pois bem", "Na verdade", "Actually")
-- Binary contrasts ("It's not X, it's Y" — just say Y)
-- Dramatic fragmentation (one-word sentences for impact)
-- Pull-quote sentences — rewrite them
-- Passive voice — find the actor, make it the subject
+Full rules and format in `CONTENT_RULES.md`.
 
 ---
 
@@ -130,24 +90,19 @@ Each entry: `[...body].length < 4000`
 
 ```json
 {
-  "id": 482,
-  "title": "Descriptive title in PT",
+  "id": 1,
+  "title": "Descriptive title (internal reference only)",
   "status": "pending",
-  "body": "🇺🇸 ...\n\n---\n\n🇧🇷 ...\n\n#hashtags"
+  "body": "post body here"
 }
 ```
 
-IDs are sequential. Always use `Math.max(...q.map(x=>x.id)) + 1` for next ID.
+IDs sequential. Use `Math.max(...q.map(x=>x.id)) + 1` for next ID.
 
-Status values: `pending` | `published` | `failed_truncation`
+Status: `pending` | `published` | `failed_truncation`
 
 ---
 
 ## Token refresh
 
 Run `node auth.js` when LinkedIn returns 401. Copy new values to `.env`.
-
-## Schedule (reference)
-
-- Mon/Thu/Sat: 8 posts/day (every 2h, 8h–22h BRT)
-- Tue/Wed/Fri/Sun: 2 posts/day (times TBD)
