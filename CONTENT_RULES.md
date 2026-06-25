@@ -1,53 +1,53 @@
-# Content Rules — LinkedIn Queue
+# Regras de Conteúdo — LinkedIn Queue
 
-## Before generating posts: ask the user
+## Antes de gerar posts: perguntar ao usuário
 
-If any of the following are not already defined in this session, **ask before writing a single post**:
+Se qualquer um dos itens abaixo não estiver definido na sessão, **perguntar antes de escrever qualquer post**:
 
-1. **Topics** — What subjects do you want to cover? (Examples: tech history, product decisions, dev culture, leadership, your industry)
-2. **Audience** — Who are you writing for? (developers, managers, founders, general professionals?)
-3. **Languages** — Do you want bilingual posts (EN + PT-BR)? Or single language? Which?
-4. **Tone** — Formal or conversational? Personal stories or educational content?
-5. **Banned topics** — Anything you never want to post about?
+1. **Tópicos** — Quais assuntos quer cobrir? (Exemplos: história da tecnologia, decisões de produto, cultura dev, liderança, seu setor)
+2. **Audiência** — Para quem você está escrevendo? (devs, gestores, fundadores, profissionais em geral?)
+3. **Idioma(s)** — Quer posts bilíngues (EN + PT-BR)? Ou só um idioma? Qual?
+4. **Tom** — Formal ou conversacional? Histórias pessoais ou conteúdo educativo?
+5. **Temas proibidos** — Tem algo que nunca quer publicar?
 
-Do not assume defaults. Ask. Only proceed once the user answers.
+Não assumir padrão nenhum. Perguntar. Só prosseguir depois que o usuário responder.
 
 ---
 
-## Flow (mandatory order)
+## Fluxo (ordem obrigatória)
 
-### 1. Check current queue
+### 1. Checar queue atual
 
 ```bash
-node -e "const q=require('./queue.json'); const p=q.filter(x=>x.status==='pending'); console.log(q.length,'total |',p.length,'pending | last ID:',Math.max(...q.map(x=>x.id))); p.slice(-5).forEach(x=>console.log(x.id,'|',x.title))"
+node -e "const q=require('./queue.json'); const p=q.filter(x=>x.status==='pending'); console.log(q.length,'total |',p.length,'pendentes | último ID:',Math.max(...q.map(x=>x.id))); p.slice(-5).forEach(x=>console.log(x.id,'|',x.title))"
 ```
 
-### 2. Define topics
+### 2. Definir tópicos
 
-Check recent titles above for duplicates. Discard a topic if it already exists in the queue — unless the angle is clearly different.
+Checar títulos recentes acima para evitar duplicatas. Descartar um tópico se já existe na fila — a menos que o ângulo seja claramente diferente.
 
-### 3. Generate posts
+### 3. Gerar posts
 
-Generate one post at a time or in parallel via the Agent tool. Follow the format below exactly.
+Gerar um por um ou em paralelo via Agent tool. Seguir o formato abaixo exatamente.
 
-### 4. Validate character count
+### 4. Validar contagem de caracteres
 
 ```js
-[...body].length < 4000   // Unicode chars, not bytes
+[...body].length < 4000   // chars Unicode, não bytes
 ```
 
-If over limit: cut middle paragraphs. Always preserve: opening + engagement question + hashtags.
+Se ultrapassar: cortar parágrafos do meio. Sempre preservar: abertura + pergunta de engajamento + hashtags.
 
-### 5. Write to queue.json
+### 5. Escrever no queue.json
 
-Use a Node.js script (copy `scripts/add-posts-example.js`). Never use shell template literals with quotes — write a `.js` file and run it.
+Usar script Node.js (copiar `scripts/add-posts-example.js`). Nunca usar template literals com aspas no shell — escrever um arquivo `.js` e rodar.
 
-The script must:
-- Check for duplicate IDs before writing
-- Validate char count before writing
-- Print confirmation after writing
+O script deve:
+- Checar IDs duplicados antes de escrever
+- Validar contagem de chars antes de escrever
+- Imprimir confirmação após escrever
 
-### 6. Commit and push
+### 6. Commit e push
 
 ```bash
 git add queue.json
@@ -55,74 +55,74 @@ git commit -m "feat: add N new LinkedIn posts (IDs X-Y)"
 git push
 ```
 
-Resolve conflicts before pushing.
+Resolver conflitos antes do push.
 
 ---
 
-## Post format
+## Formato do post
 
-### Bilingual (EN + PT-BR)
+### Bilíngue (EN + PT-BR)
 
 ```
-🇺🇸 [EN body — 3-4 paragraphs, ends with engagement question]
+🇺🇸 [corpo EN — 3-4 parágrafos, termina com pergunta de engajamento]
 
 ---
 
-🇧🇷 [PT body — same message in natural Brazilian Portuguese]
+🇧🇷 [corpo PT — mesma mensagem em português brasileiro natural]
 
-#PTHashtag1 #PTHashtag2 #PTHashtag3 #Brasil
-#ENHashtag1 #ENHashtag2 #ENHashtag3 #Software
+#HashtagPT1 #HashtagPT2 #HashtagPT3 #Brasil
+#HashtagEN1 #HashtagEN2 #HashtagEN3 #Software
 ```
 
-### Single language
+### Idioma único
 
 ```
-[body — 3-4 paragraphs, ends with engagement question]
+[corpo — 3-4 parágrafos, termina com pergunta de engajamento]
 
 #Hashtag1 #Hashtag2 #Hashtag3
 ```
 
-Use 4-6 hashtags. Mix topic-specific tags with 2 high-volume general tags relevant to the post's universe.
+Usar 4-6 hashtags. Misturar tags específicas do tema com 2 tags gerais de alto volume relevantes ao universo do post.
 
 ---
 
-## Writing rules (always apply)
+## Regras de escrita (sempre aplicar)
 
-**Structure**
-- 3-4 paragraphs
-- End with an engagement question to the reader
-- No bullet lists or numbered lists
-- No headers inside the post body
+**Estrutura**
+- 3-4 parágrafos
+- Terminar com pergunta de engajamento ao leitor
+- Sem listas (bullets ou numeração)
+- Sem cabeçalhos dentro do corpo do post
 
-**Style**
-- No emojis — except the flag emojis 🇺🇸 🇧🇷 if using bilingual format
-- No em dash (`—`). Use comma or period instead.
-- No parentheses — **breaks the LinkedIn API**
-- No adverbs
-- Active voice — human subject doing something
-- Specific: real dates, names, real numbers. No vague statements.
-- Tone: dinner conversation, not press release
+**Estilo**
+- Sem emojis — exceto bandeiras 🇺🇸 🇧🇷 se usar formato bilíngue
+- Sem travessão (`—`). Usar vírgula ou ponto.
+- Sem parênteses — **quebra a API do LinkedIn**
+- Sem advérbios
+- Voz ativa — sujeito humano fazendo algo
+- Específico: datas reais, nomes, números reais. Sem declarações vagas.
+- Tom: conversa de jantar, não press release
 
-**Stop-slop patterns to eliminate**
-- Unnecessary openers ("Well,", "Actually,", "Basically,")
-- Binary contrasts ("It's not X, it's Y" — just say Y directly)
-- Dramatic one-sentence fragments for impact — rewrite as full sentences
-- Pull-quote-style sentences — rewrite them
-- Passive voice — find the actor, make it the subject
+**Padrões stop-slop a eliminar**
+- Abridores desnecessários ("Pois bem,", "Na verdade,", "Basicamente,")
+- Contrastes binários ("Não é X, é Y" — dizer Y direto)
+- Fragmentação dramática de uma frase para impacto — reescrever como frase completa
+- Frases que soam como pull-quote — reescrever
+- Voz passiva — encontrar o ator, torná-lo sujeito
 
 ---
 
-## queue.json structure
+## Estrutura do queue.json
 
 ```json
 {
   "id": 1,
-  "title": "Descriptive title (used for internal reference only)",
+  "title": "Título descritivo (referência interna apenas)",
   "status": "pending",
-  "body": "post body here"
+  "body": "corpo do post aqui"
 }
 ```
 
-IDs are sequential. Always use `Math.max(...q.map(x=>x.id)) + 1` for the next ID.
+IDs sequenciais. Sempre usar `Math.max(...q.map(x=>x.id)) + 1` para o próximo ID.
 
-Status values: `pending` | `published` | `failed_truncation`
+Status: `pending` | `published` | `failed_truncation`
