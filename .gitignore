@@ -1,0 +1,8 @@
+node_modules/
+.env
+*.xlsx
+*.csv
+
+# Keep queue.json tracked (content source of truth)
+# Keep scripts/archive/ out of repo
+scripts/archive/

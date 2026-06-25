@@ -1,0 +1,18 @@
+{
+  "name": "publish-linkedin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LinkedIn content queue automation — publishes posts via LinkedIn REST API",
+  "scripts": {
+    "post": "node post.js",
+    "list": "node post.js --list",
+    "validate": "node post.js --validate",
+    "auth": "node auth.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
