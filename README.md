@@ -1,6 +1,6 @@
 # publish-linkedin
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/obrenoalvim/publishLinkedin/actions/workflows/ci.yml/badge.svg)](https://github.com/obrenoalvim/publishLinkedin/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Automates LinkedIn post publishing via the LinkedIn REST API. Maintains a JSON queue of posts and publishes one per invocation — designed to run on a cron schedule.
 
